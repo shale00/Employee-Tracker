@@ -11,5 +11,10 @@
     "start": "node server.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "asciiart-logo": "^0.2.7",
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.2.4"
+  }
 }
