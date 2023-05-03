@@ -114,7 +114,9 @@ const viewAllEmployeeID = async () => {
 
 const addEmployeePrompt = async () => {
     const roles = await db.promise().query('SELECT title AS name, id AS value FROM role');
-    const manager = await db.promise().query
+    const employees = await db.promise().query('SELECT id AS value, CONCAT(first_name, " ", last_name) AS name FROM employee')
+    const managerArr = employees[0];
+    managerArr.push({value: null, name: 'None'});
     const answers = await prompt([
         {
             type: 'input',
@@ -152,10 +154,10 @@ const addEmployeePrompt = async () => {
             type: 'list',
             name: 'manager_id',
             message: 'Who is the employee’s manager?',
-            choices: await viewAllManagers()
+            choices: managerArr
         }
     ]);
-        const sql = 'INSERT INTO employee SET ?';
+        // const sql = 'INSERT INTO employee SET ?';
         // const roleTitles = await viewAllRoles();
         // const roleID = roleTitles.indexOf(answers.role) + 1
         // // const [managerID] = await db.execute('SELECT manager_id FROM employee WHERE CONCAT(first_name, " ", last_name) = ?', [answers.manager]);
@@ -164,11 +166,13 @@ const addEmployeePrompt = async () => {
         // const [result] = await db.promise().query('SELECT COUNT(*) FROM employee');
         // const employeeID = parseInt(result[0].count) + 1;
 
-        await db.promise().query(sql, answers, (err) => {
-            if (err) throw err;
+        await db.promise().query('INSERT INTO employee SET ?', answers);
+        // , (err) => {
+        //     if (err) throw err;
             console.table(answers)
             loadMainPrompt();
-        });
+        // }
+        // )
 }
 
 
