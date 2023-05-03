@@ -90,13 +90,19 @@ const viewAllRoles = async () => {
 // }
 
 const viewAllEmployees = async () => {
-    try {
-        const [rows, fields] = await db.promise().query('SELECT * FROM employee');
-        const employeeArr = rows.map(row => (row.first_name + ' ' + row.last_name));
-        return employeeArr;
-    } catch (err) {
-        throw err;
-    }
+    // try {
+    //     const [rows, fields] = await db.promise().query('SELECT * FROM employee');
+    //     const employeeArr = rows.map(row => (row.first_name + ' ' + row.last_name));
+    //     return employeeArr;
+    // } catch (err) {
+    //     throw err;
+    // }
+
+    const allEmployees = await db.promise().query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, CONCAT(mgr.first_name, " ", mgr.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT OUTER JOIN employee mgr ON employee.manager_id = mgr.id');
+    //join employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
+    //SELECT employy
+    console.table(allEmployees[0]);
+    loadMainPrompt();
 }
 
 const viewAllEmployeeID = async () => {
@@ -157,22 +163,8 @@ const addEmployeePrompt = async () => {
             choices: managerArr
         }
     ]);
-        // const sql = 'INSERT INTO employee SET ?';
-        // const roleTitles = await viewAllRoles();
-        // const roleID = roleTitles.indexOf(answers.role) + 1
-        // // const [managerID] = await db.execute('SELECT manager_id FROM employee WHERE CONCAT(first_name, " ", last_name) = ?', [answers.manager]);
-        // const managers = await viewAllManagers();
-        // const managerID = managers.indexOf(answers.manager) +1
-        // const [result] = await db.promise().query('SELECT COUNT(*) FROM employee');
-        // const employeeID = parseInt(result[0].count) + 1;
-
         await db.promise().query('INSERT INTO employee SET ?', answers);
-        // , (err) => {
-        //     if (err) throw err;
-            console.table(answers)
-            loadMainPrompt();
-        // }
-        // )
+            viewAllEmployees();
 }
 
 
