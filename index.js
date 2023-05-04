@@ -19,7 +19,7 @@ db.connect((err) => {
     if (err) throw err;
 });
 
-//Display logo text, load prompts
+//Display logo text, load main prompt
 function init() {
     const logoText = logo({ name: "Employee Tracker" }).render();
 
@@ -204,15 +204,5 @@ const addDepartmentPrompt = async () => {
     viewAllDepartments();
 }
 
-
-//Get functions
-// async function getRoles() {
-//     const sql = `SELECT title AS role FROM employees_db.role`;
-
-//     db.query(sql, function (err, results) {
-//         return results;
-//     });
-// }
-
-//Function to initialize app
+//Call to initialize app
 init();
