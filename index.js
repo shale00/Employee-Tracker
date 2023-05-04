@@ -2,6 +2,7 @@
 const { prompt } = require('inquirer');
 const logo = require("asciiart-logo");
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 // Connect to database
 const db = mysql.createConnection(
@@ -82,7 +83,7 @@ const viewAllRoles = async () => {
 
 const viewAllDepartments = async () => {
     const departments = await db.promise().query('SELECT name AS department, id FROM department');
-    console.table(departments[0]);
+    console.log(departments[0]);
     loadMainPrompt();
 }
 
