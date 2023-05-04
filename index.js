@@ -67,32 +67,16 @@ const loadMainPrompt = async () => {
     })
 };
 
-//Get functions
-// const viewAllRoles = async () => {
-//     try {
-//         const [rows] = await db.promise().query('SELECT title FROM role');
-//         const roleTitles = rows.map(row => row.title);
-//         return roleTitles;
-//     } catch (err) {
-//         throw err;
-//       }
-// }
-
-
 //Get and join functions
 const viewAllEmployees = async () => {
-    // try {
-    //     const [rows, fields] = await db.promise().query('SELECT * FROM employee');
-    //     const employeeArr = rows.map(row => (row.first_name + ' ' + row.last_name));
-    //     return employeeArr;
-    // } catch (err) {
-    //     throw err;
-    // }
-
     const allEmployees = await db.promise().query('SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, department.name AS department, role.salary, CONCAT(mgr.first_name, " ", mgr.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT OUTER JOIN employee mgr ON employee.manager_id = mgr.id');
-    //join employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
-    //SELECT employy
     console.table(allEmployees[0]);
+    loadMainPrompt();
+}
+
+const viewAllRoles = async () => {
+    const allRoles = await db.promise().query('SELECT role.id AS role_id, role.title AS job_title, role.salary, department.name AS department FROM role JOIN department ON role.department_id = department.id');
+    console.table(allRoles[0]);
     loadMainPrompt();
 }
 
@@ -108,23 +92,8 @@ const roleList = async () => {
     return roles[0];
 }
 
-// const viewAllEmployeeID = async () => {
-//     try {
-//         const [rows, fields] = await db.promise().query('SELECT * FROM employee');
-//         const employeeID = rows.map(row => (row.id));
-//         return employeeID;
-//     } catch (err) {
-//         throw err;
-//     }
-// }
-
-
 //Nested question prompt functions
 const addEmployeePrompt = async () => {
-    // const roles = await db.promise().query('SELECT title AS name, id AS value FROM role');
-    // const employees = await db.promise().query('SELECT id AS value, CONCAT(first_name, " ", last_name) AS name FROM employee')
-    // const employeeArr = employees[0];
-    // employeeArr.push({value: null, name: 'None'});
     const answers = await prompt([
         {
             type: 'input',
