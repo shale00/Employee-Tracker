@@ -29,7 +29,7 @@ function init() {
 };
 
 
-//Recursive Main Prompt function
+//Main Prompt function
 const loadMainPrompt = async () => {
     prompt([
         {
@@ -68,27 +68,18 @@ const loadMainPrompt = async () => {
 };
 
 //Get functions
-const viewAllRoles = async () => {
-    try {
-        const [rows] = await db.promise().query('SELECT title FROM role');
-        const roleTitles = rows.map(row => row.title);
-        return roleTitles;
-    } catch (err) {
-        throw err;
-      }
-}
-
-// const viewAllManagers = async () => {
+// const viewAllRoles = async () => {
 //     try {
-//         const [rows, fields] = await db.promise().query('SELECT * FROM employee WHERE manager_id IS NULL');
-//         const managerArr = rows.map(row => (row.first_name + ' ' + row.last_name));
-//         managerArr.push('None');
-//         return managerArr;
+//         const [rows] = await db.promise().query('SELECT title FROM role');
+//         const roleTitles = rows.map(row => row.title);
+//         return roleTitles;
 //     } catch (err) {
 //         throw err;
-//     }
+//       }
 // }
 
+
+//Get and join functions
 const viewAllEmployees = async () => {
     // try {
     //     const [rows, fields] = await db.promise().query('SELECT * FROM employee');
@@ -98,31 +89,42 @@ const viewAllEmployees = async () => {
     //     throw err;
     // }
 
-    const allEmployees = await db.promise().query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, CONCAT(mgr.first_name, " ", mgr.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT OUTER JOIN employee mgr ON employee.manager_id = mgr.id');
+    const allEmployees = await db.promise().query('SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, department.name AS department, role.salary, CONCAT(mgr.first_name, " ", mgr.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT OUTER JOIN employee mgr ON employee.manager_id = mgr.id');
     //join employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
     //SELECT employy
     console.table(allEmployees[0]);
     loadMainPrompt();
 }
 
-const viewAllEmployeeID = async () => {
-    try {
-        const [rows, fields] = await db.promise().query('SELECT * FROM employee');
-        const employeeID = rows.map(row => (row.id));
-        return employeeID;
-    } catch (err) {
-        throw err;
-    }
+const employeeList = async () => {
+    const employees = await db.promise().query('SELECT id AS value, CONCAT(first_name, " ", last_name) AS name FROM employee');
+    const employeeArr = employees[0];
+    employeeArr.push({value: null, name: 'None'});
+    return employeeArr;
 }
+
+const roleList = async () => {
+    const roles = await db.promise().query('SELECT title AS name, id AS value FROM role');
+    return roles[0];
+}
+
+// const viewAllEmployeeID = async () => {
+//     try {
+//         const [rows, fields] = await db.promise().query('SELECT * FROM employee');
+//         const employeeID = rows.map(row => (row.id));
+//         return employeeID;
+//     } catch (err) {
+//         throw err;
+//     }
+// }
 
 
 //Nested question prompt functions
-
 const addEmployeePrompt = async () => {
-    const roles = await db.promise().query('SELECT title AS name, id AS value FROM role');
-    const employees = await db.promise().query('SELECT id AS value, CONCAT(first_name, " ", last_name) AS name FROM employee')
-    const managerArr = employees[0];
-    managerArr.push({value: null, name: 'None'});
+    // const roles = await db.promise().query('SELECT title AS name, id AS value FROM role');
+    // const employees = await db.promise().query('SELECT id AS value, CONCAT(first_name, " ", last_name) AS name FROM employee')
+    // const employeeArr = employees[0];
+    // employeeArr.push({value: null, name: 'None'});
     const answers = await prompt([
         {
             type: 'input',
@@ -154,16 +156,35 @@ const addEmployeePrompt = async () => {
             type: 'list',
             name: 'role_id',
             message: 'What is the employee’s role?',
-            choices: roles[0]
+            choices: roleList
         },
         {
             type: 'list',
             name: 'manager_id',
             message: 'Who is the employee’s manager?',
-            choices: managerArr
+            choices: employeeList
         }
     ]);
         await db.promise().query('INSERT INTO employee SET ?', answers);
+            viewAllEmployees();
+};
+
+const updateEmployeeRolePrompt = async () => {
+    const answers = await prompt([
+        {
+            type: 'list',
+            name: 'id',
+            message: 'Which employee’s role do you want to update?',
+            choices: employeeList
+        },
+        {
+            type: 'list',
+            name: 'role_id',
+            message: 'What is the employee’s role?',
+            choices: roleList
+        }
+    ]);
+        await db.promise().query('UPDATE employee SET role_id = ? WHERE id = ?', [answers.role_id, answers.id]);
             viewAllEmployees();
 }
 
