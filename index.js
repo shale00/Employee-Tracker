@@ -81,7 +81,9 @@ const viewAllRoles = async () => {
 };
 
 const viewAllDepartments = async () => {
-    const allDepartments = await db.promise().query('SELECT ')
+    const departments = await db.promise().query('SELECT name AS department, id FROM department');
+    console.table(departments[0]);
+    loadMainPrompt();
 }
 
 const departmentList = async () => {
@@ -171,7 +173,7 @@ const addRolePrompt = async () => {
         {
             type: 'input',
             name: 'title',
-            message: 'What is the name of the role?',
+            message: 'What is the name of the role?'
         },
         {
             type: 'input',
@@ -191,7 +193,15 @@ const addRolePrompt = async () => {
 }
 
 const addDepartmentPrompt = async () => {
-
+    const answers = await prompt([
+        {
+            type: 'input',
+            name: 'name',
+            message: 'What is the name of the department?'
+        }
+    ])
+    await db.promise().query('INSERT INTO department SET ?', answers);
+    viewAllDepartments();
 }
 
 
