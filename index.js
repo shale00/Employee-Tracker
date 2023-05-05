@@ -82,14 +82,14 @@ const viewAllRoles = async () => {
 };
 
 const viewAllDepartments = async () => {
-    const departments = await db.promise().query('SELECT name AS department, id FROM department');
-    console.log(departments[0]);
+    const departments = await db.promise().query('SELECT id, name AS department FROM department');
+    console.table(departments[0]);
     loadMainPrompt();
 }
 
 const departmentList = async () => {
-    const departments = await db.promise().query('SELECT name AS department, id AS value FROM department');
-    return departments;
+    const departments = await db.promise().query('SELECT id AS value, name FROM department');
+    return departments[0];
 }
 
 const employeeList = async () => {
@@ -188,7 +188,7 @@ const addRolePrompt = async () => {
             choices: departmentList
         }
     ]);
-        await db.promise().query('INSERT INTO role (title, salary, department_id) VALUES (?)', answers);
+        await db.promise().query('INSERT INTO role SET ?', answers);
         viewAllRoles();
 
 }

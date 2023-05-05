@@ -18,7 +18,7 @@
   N/A
 
   ## Usage
-  The user will need to open the app using node by entering 'node index.js' into the terminal, from there, the user will be prompted on how they can view or modifiy the employees database.
+  Before the user can modify the database, they will need to source the schema.sql and seed.sql file. Then the user will need to add their mysql database password in the index.js file on line 13. Then open the app using node by entering 'node index.js' into the terminal, from there, the user will be prompted on how they can view or modifiy the employees database. See walkthrough video below:
 
   ## Credits
   N/A
