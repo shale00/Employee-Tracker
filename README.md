@@ -3,7 +3,7 @@
   [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
   ## Description
-  This app uses the npm packages inquierer and mysql2 to be able to view and manage the departments, roles, and employees in an employee database using node.
+  This app uses the npm packages, inquirer and mysql2, to view and manage the departments, roles, and employees in an employee database using node.
 
   ## Table of Contents
   * [Installation](#installation)
